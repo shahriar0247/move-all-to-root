@@ -1,4 +1,7 @@
 import os
+import subprocess
+import threading
+from sys import platform
 
 def listall(list_path):
     all_folders = []
@@ -11,7 +14,20 @@ def listall(list_path):
     
     return all_files
 
+def execute(cmd):
+    subprocess.Popen(cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, shell=True)
+
 all_files = listall(".")
 
+number_of_files = len(all_files)
+file_num = 0
+
 for file in all_files:
-    os.system("move \"" + file + "\" .")
+    file_num = file_num + 1
+    print(str(int(file_num*100/number_of_files)) + "%")
+    if platform == "win32":
+        cmd = ("move \"" + file + "\" .")
+    else:
+        cmd = ("mv \"" + file + "\" .")
+    execute(cmd)
+    #threading.Thread(target=execute,args=[cmd]).start()
